@@ -77,8 +77,8 @@ def makeWebhookResult(data):
 
     # print(json.dumps(item, indent=4))
 
-    speech = "Tooday in " + location.get('city') + " " + condition.get('text') + \
-             ", temperature is " + condition.get('temp') + " " + units.get('temperature')
+    speech = "Today in " + location.get('city') + ": " + condition.get('text') + \
+             ", the temperature is " + condition.get('temp') + " " + units.get('temperature')
 
     print("Response:")
     print(speech)
