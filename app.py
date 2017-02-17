@@ -1,9 +1,13 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-import urllib.request, urllib.parse, urllib.error
+from future.standard_library import install_aliases
+install_aliases()
+
+from urllib.parse import urlparse, urlencode
+from urllib.request import urlopen, Request
+from urllib.error import HTTPError
+
 import json
 import os
 
@@ -38,8 +42,8 @@ def processRequest(req):
     yql_query = makeYqlQuery(req)
     if yql_query is None:
         return {}
-    yql_url = baseurl + urllib.parse.urlencode({'q': yql_query}) + "&format=json"
-    result = urllib.request.urlopen(yql_url).read()
+    yql_url = baseurl + urlencode({'q': yql_query}) + "&format=json"
+    result = urlopen(yql_url).read()
     data = json.loads(result)
     res = makeWebhookResult(data)
     return res
