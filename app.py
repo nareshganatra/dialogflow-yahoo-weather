@@ -14,9 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Author - Naresh 
+
 from __future__ import print_function
-from future.standard_library import install_aliases
-install_aliases()
+#from future.standard_library import install_aliases
+#install_aliases()
 
 from urllib.parse import urlparse, urlencode
 from urllib.request import urlopen, Request
@@ -38,6 +40,7 @@ def webhook():
     req = request.get_json(silent=True, force=True)
 
     print("Request:")
+    # commented out by Naresh
     print(json.dumps(req, indent=4))
 
     res = processRequest(req)
@@ -50,6 +53,7 @@ def webhook():
 
 
 def processRequest(req):
+    print ("starting processRequest...",req.get("result").get("action"))
     if req.get("result").get("action") != "yahooWeatherForecast":
         return {}
     baseurl = "https://query.yahooapis.com/v1/public/yql?"
@@ -69,11 +73,11 @@ def makeYqlQuery(req):
     city = parameters.get("geo-city")
     if city is None:
         return None
-
     return "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text='" + city + "')"
 
 
 def makeWebhookResult(data):
+    print ("starting makeWebhookResult...")
     query = data.get('query')
     if query is None:
         return {}
@@ -113,9 +117,33 @@ def makeWebhookResult(data):
     }
 
 
+@app.route('/test', methods=['GET'])
+def test():
+    return  "Hello there my friend !!"
+
+
+@app.route('/static_reply', methods=['POST'])
+def static_reply():
+    speech = "Hello there, this reply is from the webhook !! "
+    my_result =  {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        # "contextOut": [],
+        "source": "apiai-weather-webhook-sample"
+    }
+    res = json.dumps(my_result, indent=4)
+    r = make_response(res)
+    r.headers['Content-Type'] = 'application/json'
+    return r
+
+
+
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 5000))
 
     print("Starting app on port %d" % port)
 
-    app.run(debug=False, port=port, host='0.0.0.0')
+    app.run(debug=True, port=port, host='0.0.0.0')
+
+
