@@ -62,7 +62,9 @@ def processRequest(req):
         return {}
     yql_url = baseurl + urlencode({'q': yql_query}) + "&format=json"
     result = urlopen(yql_url).read()
-    data = json.loads(result)
+    #data = json.loads(result)
+    #for some the line above gives an error and hence decoding to utf-8 might help
+    data = json.loads(result.decode('utf-8'))
     res = makeWebhookResult(data)
     return res
 
